@@ -1,6 +1,3 @@
-# Create a deploy-ready static site (HTML/CSS/JS) and zip it for VNZ
-import os, zipfile, textwrap, json, pathlib
-
 root = "/mnt/data/vnz-flyers-site"
 os.makedirs(root, exist_ok=True)
 assets = os.path.join(root, "assets")
@@ -168,60 +165,3 @@ index_html = """<!doctype html>
 </body>
 </html>
 """
-
-styles_css = """
-:root { --bg:#fff; --fg:#111; --muted:#6b7280; --brand:#111; --alt:#f6f6f6; }
-*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--fg);}
-.container{max-width:1100px;margin:0 auto;padding:0 20px}
-.nav{position:sticky;top:0;backdrop-filter:saturate(1.2) blur(8px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb;z-index:40}
-.nav__inner{height:64px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-weight:700;text-decoration:none;color:var(--fg)} .logo span{color:var(--muted);font-weight:600}
-.nav__links{display:flex;gap:18px;align-items:center}
-.nav__links a{color:var(--fg);text-decoration:none;opacity:.9} .nav__links a:hover{opacity:1}
-.nav__menu{display:none;background:transparent;border:0;font-size:20px}
-.btn{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;border-radius:16px;padding:10px 14px;text-decoration:none;border:1px solid #111}
-.btn--ghost{background:transparent;color:var(--fg);border-color:#e5e7eb}
-.btn--block{width:100%;justify-content:center}
-.hero{padding:72px 0;background:linear-gradient(180deg,#fff, #fafafa 50%, #fff)}
-.hero__grid{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
-.hero__text h1{font-size:44px;line-height:1.05;margin:0 0 10px} mark{background:#111;color:#fff;padding:0 6px;border-radius:6px}
-.hero__text p{color:var(--muted);max-width:520px}
-.hero__cta{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
-.hero__badges{margin:14px 0 0;padding:0;list-style:none;display:flex;gap:16px;color:var(--muted);font-size:14px}
-.hero__mosaic{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile{aspect-ratio:4/5;border-radius:16px;background:#e5e7eb;box-shadow:0 1px 0 #e5e7eb}
-.section{padding:72px 0} .section.alt{background:var(--alt)}
-.section h2{font-size:32px;margin:0 0 6px} .muted{color:var(--muted)}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
-.card{border:1px solid #e5e7eb;border-radius:16px;padding:18px;background:#fff}
-.price{border:1px solid #e5e7eb;border-radius:18px;padding:18px;background:#fff;display:flex;flex-direction:column;gap:10px}
-.price header{display:flex;align-items:center;justify-content:space-between}
-.price__tag{font-weight:700;font-size:22px}
-.price.highlight{border-width:2px}
-.portfolio .ph{aspect-ratio:4/5;background:#e5e7eb;border-radius:14px}
-.contact ul{margin:0 0 10px;padding-left:18px}
-.small{font-size:12px}
-footer.footer{border-top:1px solid #e5e7eb;padding:24px 0}
-.footer .container{display:flex;align-items:center;justify-content:space-between;gap:16px}
-@media (max-width:900px){.hero__grid,.grid3,.grid2{grid-template-columns:1fr}.nav__links{display:none}.nav__menu{display:block}}
-"""
-
-script_js = """
-function toggleMenu(){ const links=document.querySelector('.nav__links'); if(links.style.display==='flex'){links.style.display='none'} else {links.style.display='flex'; links.style.flexDirection='column'} }
-function openWhatsApp(e){ e.preventDefault(); const f=e.target; const nome=f.nome.value||''; const tipo=f.tipo.value||'Flyer Estático'; const qtde=f.qtde.value||'1'; const detalhes=f.detalhes.value||''; const msg=encodeURIComponent(`Olá, sou ${nome}. Quero ${qtde}x ${tipo}. Detalhes: ${detalhes}`); const zap='5511930200313'; window.location.href=`https://wa.me/${zap}?text=${msg}`; return false;}
-document.getElementById('year').textContent = new Date().getFullYear();
-"""
-
-with open(os.path.join(root,"index.html"),"w", encoding="utf-8") as f: f.write(index_html)
-with open(os.path.join(root,"styles.css"),"w", encoding="utf-8") as f: f.write(styles_css)
-with open(os.path.join(root,"script.js"),"w", encoding="utf-8") as f: f.write(script_js)
-
-zip_path = "/mnt/data/vnz-flyers-site.zip"
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    for dirpath, _, filenames in os.walk(root):
-        for name in filenames:
-            path = os.path.join(dirpath, name)
-            z.write(path, arcname=os.path.relpath(path, root))
-
-zip_path
